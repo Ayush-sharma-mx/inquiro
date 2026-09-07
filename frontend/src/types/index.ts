@@ -51,10 +51,17 @@ export interface Answer {
   question?: Question;
 }
 
-export interface QuestionSummary {
-  question_id: number;
-  question_title: string;
-  question_type: QuestionType;
+export interface QuestionSummaryItem {
+  type: QuestionType;
+  title: string;
   response_count: number;
-  stats: Record<string, any>;
+  option_counts?: Record<string, number>;
+  min?: number | null;
+  max?: number | null;
+  avg?: number | null;
+  yes_count?: number;
+  no_count?: number;
+  distribution?: Record<string, number>;
 }
+
+export type FormSummary = Record<string, QuestionSummaryItem>;

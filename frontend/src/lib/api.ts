@@ -1,4 +1,4 @@
-import { Form, Question, FormResponse, QuestionSummary } from '../types';
+import { Form, Question, FormResponse, FormSummary } from '../types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -56,6 +56,6 @@ export const api = {
   responses: {
     list: (formId: number) => fetchAPI<FormResponse[]>(`/forms/${formId}/responses`),
     get: (formId: number, rid: number) => fetchAPI<FormResponse>(`/forms/${formId}/responses/${rid}`),
-    summary: (formId: number) => fetchAPI<QuestionSummary[]>(`/forms/${formId}/summary`),
+    summary: (formId: number) => fetchAPI<FormSummary>(`/forms/${formId}/summary`),
   },
 };

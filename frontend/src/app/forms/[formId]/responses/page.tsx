@@ -3,22 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Form, FormResponse } from '@/types';
+import { Form, FormResponse, FormSummary } from '@/types';
 import { ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-interface SummaryItem {
-  type: string;
-  title: string;
-  response_count: number;
-  option_counts?: Record<string, number>;
-  min?: number | null;
-  max?: number | null;
-  avg?: number | null;
-  yes_count?: number;
-  no_count?: number;
-  distribution?: Record<string, number>;
-}
 
 export default function ResponsesPage() {
   const params = useParams();
@@ -27,7 +14,7 @@ export default function ResponsesPage() {
 
   const [form, setForm] = useState<Form | null>(null);
   const [responses, setResponses] = useState<FormResponse[]>([]);
-  const [summary, setSummary] = useState<Record<string, SummaryItem>>({});
+  const [summary, setSummary] = useState<FormSummary>({});
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'responses' | 'summary'>('responses');
 
@@ -41,7 +28,7 @@ export default function ResponsesPage() {
         ]);
         setForm(formData);
         setResponses(resData);
-        setSummary(sumData as any);
+        setSummary(sumData);
       } catch (error) {
         toast.error('Failed to load responses');
       } finally {

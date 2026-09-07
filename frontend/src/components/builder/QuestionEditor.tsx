@@ -14,11 +14,14 @@ export const QuestionEditor: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  const [pendingSettings, setPendingSettings] = useState<any | null>(null);
+
   // Update local state when selected question changes
   useEffect(() => {
     if (question) {
       setTitle(question.title);
       setDescription(question.description || '');
+      setPendingSettings(null);
     }
   }, [question?.id, question?.title, question?.description]);
 
@@ -38,6 +41,20 @@ export const QuestionEditor: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [title, description, question?.id]);
 
+  // Debounced auto-save for settings_json (options list, rating scale, etc.)
+  // so typing into an option doesn't fire a request on every keystroke.
+  useEffect(() => {
+    if (!question || pendingSettings === null) return;
+    const timeoutId = setTimeout(async () => {
+      try {
+        await api.questions.update(question.id, { settings_json: JSON.stringify(pendingSettings) } as any);
+      } catch {
+        toast.error('Failed to save settings');
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [pendingSettings, question?.id]);
+
   if (!question) {
     return (
       <div className="flex h-full items-center justify-center text-gray-500">
@@ -46,14 +63,10 @@ export const QuestionEditor: React.FC = () => {
     );
   }
 
-  const handleSettingsChange = async (newSettings: any) => {
+  const handleSettingsChange = (newSettings: any) => {
     const merged = { ...(question.settings_json || {}), ...newSettings };
     updateQuestion(question.id, { settings_json: merged });
-    try {
-      await api.questions.update(question.id, { settings_json: JSON.stringify(merged) } as any);
-    } catch {
-      toast.error('Failed to save settings');
-    }
+    setPendingSettings(merged);
   };
 
   const handleRequiredToggle = async () => {
@@ -142,4 +155,3 @@ export const QuestionEditor: React.FC = () => {
     </div>
   );
 };
-
