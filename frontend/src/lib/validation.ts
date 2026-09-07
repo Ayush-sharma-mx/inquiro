@@ -36,3 +36,12 @@ export const getValidationSchema = (type: QuestionType, isRequired: boolean) => 
 
   return schema;
 };
+
+export const validateAnswer = (question: any, value: any): string | null => {
+  const schema = getValidationSchema(question.type, question.is_required);
+  const result = schema.safeParse(value);
+  if (!result.success) {
+    return result.error.errors[0]?.message || 'Invalid answer';
+  }
+  return null;
+};
