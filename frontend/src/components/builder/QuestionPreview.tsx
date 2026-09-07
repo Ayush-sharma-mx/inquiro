@@ -7,7 +7,7 @@ export const QuestionPreview: React.FC = () => {
   const question = questions.find((q) => q.id === selectedQuestionId);
   const [value, setValue] = useState<any>('');
 
-  // Reset value when question changes
+  
   React.useEffect(() => {
     setValue('');
   }, [question?.id]);
